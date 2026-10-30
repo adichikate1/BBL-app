@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BBL Women · Match Predictor</title>
+  <meta name="description" content="Predict the winner of a Big Bash League Women match from recent form, head-to-head, net run rate and team averages.">
+  <meta name="theme-color" content="#0e0e0c">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230e0e0c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%23f2ecdf' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="cursor" aria-hidden="true"></div>
+
+  <header class="top">
+    <span class="mark">BBL<i>W</i></span>
+    <span class="top-meta">Match Predictor · v{{ model.version }}</span>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Big Bash League Women</p>
+      <h1>Who takes<br><em>the points?</em></h1>
+      <p class="lede">Pick two teams, adjust their numbers, and get the model’s read on who wins. Trained on {{ model.trained_on.matches }} matches from {{ model.trained_on.from[:4] }}–{{ model.trained_on.to[:4] }}.</p>
+    </section>
+
+    <form id="form" class="panel" novalidate autocomplete="off">
+      <div class="fetchrow">
+        <label for="code"><span class="num">00</span> CREX match code <small>fills teams and all stats automatically</small></label>
+        <div class="codebox">
+          <input id="code" name="code" type="text" maxlength="8" placeholder="e.g. PZ7" autocapitalize="off" autocorrect="off" spellcheck="false" aria-describedby="fetchnote">
+          <button type="button" id="fetch" class="fetchbtn">Fetch &amp; predict</button>
+        </div>
+        <p id="fetchnote" class="fetchnote" aria-live="polite" hidden></p>
+      </div>
+
+      <div class="subhead"><span>Or choose manually</span></div>
+
+      <div class="grid teams">
+        <div class="cell">
+          <label for="team1"><span class="num">01</span> Team 1</label>
+          <select id="team1" name="team1" required></select>
+        </div>
+        <div class="cell">
+          <label for="team2"><span class="num">02</span> Team 2</label>
+          <select id="team2" name="team2" required></select>
+        </div>
+      </div>
+
+      <div class="subhead">
+        <span>Team stats <small>pre-filled with each team’s latest numbers in the dataset — edit freely</small></span>
+        <button type="button" id="reset" class="link" disabled>Reset to latest</button>
+      </div>
+
+      <div class="grid stats" id="stats" aria-label="Team statistics">
+        <div class="statrow head" aria-hidden="true">
+          <span id="h1">Team 1</span><span></span><span id="h2">Team 2</span>
+        </div>
+      </div>
+
+      <p id="error" class="error" role="alert" hidden></p>
+
+      <button type="submit" id="go" class="cta"><span>Predict winner</span><b aria-hidden="true">→</b></button>
+    </form>
+
+    <section id="result" class="result" aria-live="polite" hidden>
+      <p class="eyebrow">Model’s call</p>
+      <h2 id="winner"></h2>
+      <p id="strength" class="strength"></p>
+
+      <div class="meter" role="img" aria-label="Win probability">
+        <div class="side left"><span id="n1"></span><strong id="p1"></strong></div>
+        <div class="bar"><i id="bar1"></i></div>
+        <div class="side right"><span id="n2"></span><strong id="p2"></strong></div>
+      </div>
+
+      <h3>What drove it</h3>
+      <ul id="factors" class="factors"></ul>
+      <p class="fine">Bars show how much each stat pushed the call toward Team 1 (left) or Team 2 (right).</p>
+    </section>
+
+    <section class="honest">
+      <h3>How much to trust this</h3>
+      <div class="stats-row">
+        <div><strong id="acc-overall">—</strong><span>accuracy across 3 held-out seasons ({{ model.validation.matches_tested }} matches)</span></div>
+        <div><strong>≈{{ (model.validation.baseline * 100)|round|int }}%</strong><span>from always picking one side</span></div>
+        <div><strong>50–70%</strong><span>range season to season</span></div>
+      </div>
+      <p>Women’s T20 is high-variance and this dataset is small, so the model is only modestly better than a coin flip. Use it for learning and fun, not for betting.</p>
+    </section>
+  </main>
+
+  <footer>Logistic regression on five Team 1 − Team 2 differences: recent form, head-to-head, last-5 net run rate, average runs, average wickets.</footer>
+
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body>
+</html>

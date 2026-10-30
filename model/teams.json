@@ -1,0 +1,286 @@
+{
+  "teams": {
+    "Adelaide Strikers Women": {
+      "form": 2.0,
+      "nrr5": 0.084,
+      "avgruns": 148.4,
+      "avgwk": 7.0,
+      "short": "ADS-W"
+    },
+    "Brisbane Heat Women": {
+      "form": 0.0,
+      "nrr5": -0.806,
+      "avgruns": 153.2,
+      "avgwk": 7.8,
+      "short": "BH-W"
+    },
+    "Hobart Hurricanes Women": {
+      "form": 3.0,
+      "nrr5": 0.995,
+      "avgruns": 172.8,
+      "avgwk": 6.6,
+      "short": "HBH-W"
+    },
+    "Melbourne Renegades Women": {
+      "form": 1.0,
+      "nrr5": -0.336,
+      "avgruns": 144.4,
+      "avgwk": 8.4,
+      "short": "MLR-W"
+    },
+    "Melbourne Stars Women": {
+      "form": 2.0,
+      "nrr5": -1.557,
+      "avgruns": 142.8,
+      "avgwk": 7.8,
+      "short": "MLS-W"
+    },
+    "Perth Scorchers Women": {
+      "form": 4.0,
+      "nrr5": 0.645,
+      "avgruns": 179.2,
+      "avgwk": 5.2,
+      "short": "PRS-W"
+    },
+    "Sydney Sixers Women": {
+      "form": 4.0,
+      "nrr5": -0.061,
+      "avgruns": 159.4,
+      "avgwk": 6.2,
+      "short": "SYS-W"
+    },
+    "Sydney Thunder Women": {
+      "form": 3.0,
+      "nrr5": 0.189,
+      "avgruns": 154.0,
+      "avgwk": 6.0,
+      "short": "SYT-W"
+    }
+  },
+  "h2h": {
+    "Brisbane Heat Women|Sydney Sixers Women": [
+      2,
+      3
+    ],
+    "Sydney Sixers Women|Brisbane Heat Women": [
+      3,
+      2
+    ],
+    "Sydney Thunder Women|Hobart Hurricanes Women": [
+      2,
+      3
+    ],
+    "Hobart Hurricanes Women|Sydney Thunder Women": [
+      3,
+      2
+    ],
+    "Adelaide Strikers Women|Sydney Sixers Women": [
+      5,
+      0
+    ],
+    "Sydney Sixers Women|Adelaide Strikers Women": [
+      0,
+      5
+    ],
+    "Brisbane Heat Women|Melbourne Stars Women": [
+      4,
+      1
+    ],
+    "Melbourne Stars Women|Brisbane Heat Women": [
+      1,
+      4
+    ],
+    "Melbourne Renegades Women|Adelaide Strikers Women": [
+      3,
+      2
+    ],
+    "Adelaide Strikers Women|Melbourne Renegades Women": [
+      2,
+      3
+    ],
+    "Sydney Sixers Women|Melbourne Stars Women": [
+      2,
+      3
+    ],
+    "Melbourne Stars Women|Sydney Sixers Women": [
+      3,
+      2
+    ],
+    "Sydney Thunder Women|Perth Scorchers Women": [
+      3,
+      2
+    ],
+    "Perth Scorchers Women|Sydney Thunder Women": [
+      2,
+      3
+    ],
+    "Hobart Hurricanes Women|Perth Scorchers Women": [
+      4,
+      1
+    ],
+    "Perth Scorchers Women|Hobart Hurricanes Women": [
+      1,
+      4
+    ],
+    "Brisbane Heat Women|Melbourne Renegades Women": [
+      3,
+      2
+    ],
+    "Melbourne Renegades Women|Brisbane Heat Women": [
+      2,
+      3
+    ],
+    "Perth Scorchers Women|Melbourne Stars Women": [
+      2,
+      3
+    ],
+    "Melbourne Stars Women|Perth Scorchers Women": [
+      3,
+      2
+    ],
+    "Brisbane Heat Women|Sydney Thunder Women": [
+      3,
+      2
+    ],
+    "Sydney Thunder Women|Brisbane Heat Women": [
+      2,
+      3
+    ],
+    "Brisbane Heat Women|Adelaide Strikers Women": [
+      4,
+      1
+    ],
+    "Adelaide Strikers Women|Brisbane Heat Women": [
+      1,
+      4
+    ],
+    "Adelaide Strikers Women|Perth Scorchers Women": [
+      4,
+      1
+    ],
+    "Perth Scorchers Women|Adelaide Strikers Women": [
+      1,
+      4
+    ],
+    "Hobart Hurricanes Women|Sydney Sixers Women": [
+      1,
+      4
+    ],
+    "Sydney Sixers Women|Hobart Hurricanes Women": [
+      4,
+      1
+    ],
+    "Melbourne Renegades Women|Melbourne Stars Women": [
+      3,
+      2
+    ],
+    "Melbourne Stars Women|Melbourne Renegades Women": [
+      2,
+      3
+    ],
+    "Brisbane Heat Women|Perth Scorchers Women": [
+      2,
+      3
+    ],
+    "Perth Scorchers Women|Brisbane Heat Women": [
+      3,
+      2
+    ],
+    "Melbourne Renegades Women|Sydney Sixers Women": [
+      1,
+      4
+    ],
+    "Sydney Sixers Women|Melbourne Renegades Women": [
+      4,
+      1
+    ],
+    "Adelaide Strikers Women|Melbourne Stars Women": [
+      2,
+      3
+    ],
+    "Melbourne Stars Women|Adelaide Strikers Women": [
+      3,
+      2
+    ],
+    "Sydney Thunder Women|Sydney Sixers Women": [
+      2,
+      3
+    ],
+    "Sydney Sixers Women|Sydney Thunder Women": [
+      3,
+      2
+    ],
+    "Hobart Hurricanes Women|Melbourne Renegades Women": [
+      3,
+      2
+    ],
+    "Melbourne Renegades Women|Hobart Hurricanes Women": [
+      2,
+      3
+    ],
+    "Perth Scorchers Women|Sydney Sixers Women": [
+      3,
+      1
+    ],
+    "Sydney Sixers Women|Perth Scorchers Women": [
+      1,
+      3
+    ],
+    "Hobart Hurricanes Women|Brisbane Heat Women": [
+      4,
+      1
+    ],
+    "Brisbane Heat Women|Hobart Hurricanes Women": [
+      1,
+      4
+    ],
+    "Melbourne Renegades Women|Sydney Thunder Women": [
+      3,
+      2
+    ],
+    "Sydney Thunder Women|Melbourne Renegades Women": [
+      2,
+      3
+    ],
+    "Hobart Hurricanes Women|Adelaide Strikers Women": [
+      3,
+      2
+    ],
+    "Adelaide Strikers Women|Hobart Hurricanes Women": [
+      2,
+      3
+    ],
+    "Melbourne Renegades Women|Perth Scorchers Women": [
+      1,
+      4
+    ],
+    "Perth Scorchers Women|Melbourne Renegades Women": [
+      4,
+      1
+    ],
+    "Hobart Hurricanes Women|Melbourne Stars Women": [
+      3,
+      2
+    ],
+    "Melbourne Stars Women|Hobart Hurricanes Women": [
+      2,
+      3
+    ],
+    "Sydney Thunder Women|Adelaide Strikers Women": [
+      0,
+      5
+    ],
+    "Adelaide Strikers Women|Sydney Thunder Women": [
+      5,
+      0
+    ],
+    "Melbourne Stars Women|Sydney Thunder Women": [
+      1,
+      4
+    ],
+    "Sydney Thunder Women|Melbourne Stars Women": [
+      4,
+      1
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+# only needed to re-train the model (python train_model.py); NOT needed to run the website
+pandas
+numpy
+scikit-learn

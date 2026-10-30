@@ -1,0 +1,65 @@
+{
+  "version": "1.0",
+  "trained_on": {
+    "matches": 190,
+    "from": "2022-10-13",
+    "to": "2025-12-13"
+  },
+  "features": [
+    {
+      "key": "form",
+      "label": "Recent form (wins in last 5)",
+      "weight": 0.15846003120131025,
+      "range": [
+        0,
+        5
+      ]
+    },
+    {
+      "key": "h2h",
+      "label": "Head-to-head (last 5 wins)",
+      "weight": -0.02919352163509596,
+      "range": [
+        0,
+        5
+      ]
+    },
+    {
+      "key": "nrr5",
+      "label": "Net run rate (last 5)",
+      "weight": 0.06133453629520186,
+      "range": [
+        -2.099647985091908,
+        2.1633139409609994
+      ]
+    },
+    {
+      "key": "avgruns",
+      "label": "Average runs scored",
+      "weight": -0.003015579486787328,
+      "range": [
+        107.8,
+        191.4
+      ]
+    },
+    {
+      "key": "avgwk",
+      "label": "Average wickets lost",
+      "weight": -0.13641320208681526,
+      "range": [
+        3.0,
+        10.0
+      ]
+    }
+  ],
+  "validation": {
+    "by_season": {
+      "2023": 0.5,
+      "2024": 0.65,
+      "2025": 0.641
+    },
+    "overall": 0.584,
+    "matches_tested": 137,
+    "baseline": 0.53
+  }
+}
