@@ -30,7 +30,7 @@ def build_pages():
         else:
             pages[c] = (match_page(*SS, *BH, "130-6", "(20.0)", "120-10", "(20.0)") if i % 2 else
                         match_page(*BH, *SS, "120-10", "(20.0)", "130-6", "(20.0)"))
-    pages["PZ7"] = (f"{PAD}team1:{BH[1]},team2:{SS[1]},https:api.goscorer.comapiv3getSV3?k=1,team1:{BH[0]},"
+    pages["PZ7"] = (f"{PAD}team1:{BH[1]},team2:{SS[1]},t:2025-12-04T08:10:00.000Z,https:api.goscorer.comapiv3getSV3?k=1,team1:{BH[0]},"
                     f"team2:{SS[0]},team1_f_n:{BH[1]},team2_f_n:{SS[1]},tf:W2L1W1L1-L1W1L3,"
                     f"https:api.goscorer.comapiv3getIV4?key=abc,t1f:{chunks(BH_CODES)},t2f:{chunks(SS_CODES)},zz,"
                     "https:stats.crickapi.comlivegetPreLiveStats:{a:[{result:Brisbane Heat Women won by 5 wkts,id:1},"

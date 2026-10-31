@@ -16,8 +16,8 @@
   <div class="cursor" aria-hidden="true"></div>
 
   <header class="top">
-    <span class="mark">BBL<i>W</i></span>
-    <span class="top-meta">Match Predictor · v{{ model.version }}</span>
+    <a class="mark" href="/">BBL<i>W</i></a>
+    <nav class="nav" aria-label="Main"><a href="/" aria-current="page">Predictor</a><a href="/tracker">Tracker</a></nav>
   </header>
 
   <main>
@@ -77,6 +77,12 @@
         <div class="side right"><span id="n2"></span><strong id="p2"></strong></div>
       </div>
 
+      <div id="stakebox" class="stakebox" hidden>
+        <p class="eyebrow">From your tracker</p>
+        <p id="stake-line"></p>
+        <a id="stake-link" class="link" href="/tracker">Log this bet →</a>
+      </div>
+
       <h3>What drove it</h3>
       <ul id="factors" class="factors"></ul>
       <p class="fine">Bars show how much each stat pushed the call toward Team 1 (left) or Team 2 (right).</p>
@@ -95,6 +101,7 @@
 
   <footer>Logistic regression on five Team 1 − Team 2 differences: recent form, head-to-head, last-5 net run rate, average runs, average wickets.</footer>
 
+  <script src="{{ url_for('static', filename='ledger.js') }}" defer></script>
   <script src="{{ url_for('static', filename='app.js') }}" defer></script>
 </body>
 </html>

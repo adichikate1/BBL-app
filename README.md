@@ -44,6 +44,15 @@ in the notebook's order: `find_team_name` → `get_recent_form` → `get_h2h_win
   functions `print` their progress to the server log.
 - It scrapes a third-party site: check CREX's terms; some hosting IPs may be blocked, and a layout change will break it.
 
+## Bet tracker (`/tracker`)
+Log every match as **won / lost / pending / skipped**; the page keeps net profit-loss, win rate, ROI and a running total per match.
+- **Next stake rule:** if net < 0 → `|net| ÷ matches played` (e.g. ₹500 down over 3 played → ₹166.67 → ₹167); if you are in profit or break-even → your base stake.
+- "Played" counts only won + lost bets. Skipped and pending matches are logged but not counted in the divisor.
+- Optional **max stake** cap and **stop-loss** warning, plus an honest "if it wins / if it loses at odds X" preview.
+- The predictor shows the suggested stake under each prediction (and flags toss-ups as skippable) with a "Log this bet" link that pre-fills the tracker.
+- Data lives only in the visitor's browser (localStorage, never sent to the server); use **Export CSV** to keep a copy.
+- Logic is in `static/ledger.js` (unit tests: `node tests/ledger.test.js`).
+
 ## Re-train / test
 ```bash
 pip install -r requirements-train.txt && python train_model.py data/bbl_women.csv   # rewrites model/*.json
@@ -53,3 +62,33 @@ The server needs only Flask, gunicorn, requests and beautifulsoup4: the trained 
 
 Notes: the rate limiter is in-memory per worker (fine for a small site; use a shared store for many instances).
 Team stats are pre-filled from each team's most recent match in the CSV — update the CSV and re-train to refresh them.
+
+## Bet tracker (`/tracker`)
+
+A profit/loss log that lives in the browser (`localStorage`, key `bblw.ledger.v1`). No server storage.
+
+- Every match gets one row: date, match, pick, status (`pending`, `won`, `lost`, `skipped`), stake, amount, note.
+- Net profit/loss = sum of won amounts minus lost amounts. Skipped and pending rows are kept but not counted.
+- **Next stake** = `total loss ÷ matches played` (played = won + lost), rounded. In profit (or no loss) it is the base stake.
+  Example: lost ₹500 over 3 played matches -> next stake ₹167.
+- Settings: base stake, max stake cap, stop-loss limit, expected odds (used for the what-if line).
+- The Predictor page shows the suggested stake under each result and links to the tracker with the match prefilled.
+- Export CSV / Clear all. Clearing site data deletes the log, so export regularly.
+- Pure maths lives in `static/ledger.js` and is tested with `node tests/ledger.test.js`.
+
+Note: loss ÷ played does not recover losses by itself; it is a staking rule, not an edge.
+
+### Auto-fill and GitHub backup (tracker)
+
+- **CREX code on the tracker:** type the match code and press *Fetch match*. Date and time come from the notebook function `get_date_and_time` (used verbatim in `crex_functions.py`), the match name from the team names, and *My pick* from the model's prediction (its probability is saved too). Status, stake, amount and note are yours to fill. Time is shown exactly as CREX gives it.
+- **Several matches a day:** each match is its own row (date + time, own CREX code). The same code cannot be added twice; the date stays after *Add match* so the second match of the day is quick.
+- **GitHub backup (PyGithub, `github_store.py`):** every change is committed to `data/ledger.json`. Set these environment variables on the server:
+
+| Variable | Meaning |
+|---|---|
+| `GITHUB_TOKEN` | fine-grained token, only this repo, *Contents: read & write* |
+| `GITHUB_REPO` | `owner/name` |
+| `SYNC_KEY` | secret you type once into the tracker's "GitHub backup" box (protects your repo from strangers) |
+| `GITHUB_BRANCH`, `GITHUB_LEDGER_PATH` | optional (default branch, `data/ledger.json`) |
+
+The token never reaches the browser. Without these variables the backup box stays hidden and the tracker works locally. Use HTTPS in production because the sync key travels in a header. An empty ledger is never pushed unless you delete the last match / press *Clear all* / confirm an empty *Sync now*.

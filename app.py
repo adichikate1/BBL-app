@@ -5,6 +5,7 @@ from collections import defaultdict, deque
 
 from flask import Flask, jsonify, render_template, request
 
+import github_store
 import predictor
 import scraper
 
@@ -39,7 +40,11 @@ def _client_ip():
 def rate_limit():
     if not request.path.startswith("/api/"):
         return None
+    if request.path.startswith("/api/sync/"):
+        request.max_content_length = 1024 * 1024        # a whole ledger is bigger than a prediction
     ip = _client_ip()
+    if request.path.startswith("/api/sync/") and _limited(ip, "sync", int(os.getenv("SYNC_LIMIT", "20"))):
+        return jsonify(error="Too many sync requests. Please wait a minute."), 429
     if request.path == "/api/fetch" and _limited(ip, "fetch", FETCH_LIMIT):
         return jsonify(error="Too many fetches. Please wait a minute."), 429
     if _limited(ip):
@@ -65,6 +70,11 @@ def security_headers(resp):
 @app.get("/")
 def index():
     return render_template("index.html", model=predictor.MODEL)
+
+
+@app.get("/tracker")
+def tracker():
+    return render_template("tracker.html")
 
 
 @app.get("/healthz")
@@ -116,7 +126,55 @@ def fetch_from_crex():
         return jsonify(error=f"Teams '{d['team1_name']}' vs '{d['team2_name']}' are not in the model "
                              "(it only knows the 8 BBL Women teams)."), 422
     log.info("fetch %s -> %s vs %s", d["code"], t1, t2)
-    return jsonify(code=d["code"], team1=t1, team2=t2, t1=d["t1"], t2=d["t2"], matches_used=d["matches_used"])
+    # the model's pick, so the tracker can fill "my pick" too (best effort: the fetch itself still succeeds)
+    try:
+        pred = predictor.predict(predictor.validate({"team1": t1, "team2": t2, "t1": d["t1"], "t2": d["t2"]}))
+        prediction = {"winner": pred["winner"], "p_team1": pred["p_team1"], "p_team2": pred["p_team2"], "strength": pred["strength"]}
+    except predictor.ValidationError:
+        prediction = None
+    return jsonify(code=d["code"], team1=t1, team2=t2, t1=d["t1"], t2=d["t2"], matches_used=d["matches_used"],
+                   date=d["date"], time=d["time"], prediction=prediction)
+
+
+# --- GitHub sync of the bet ledger -------------------------------------------------
+def _sync_guard():
+    if not github_store.enabled():
+        return jsonify(error="GitHub sync is not configured on the server (set GITHUB_TOKEN, GITHUB_REPO, SYNC_KEY).", enabled=False), 503
+    if not github_store.check_key(request.headers.get("X-Sync-Key")):
+        return jsonify(error="Wrong sync key."), 401
+    return None
+
+
+@app.get("/api/sync/status")
+def sync_status():
+    return jsonify(enabled=github_store.enabled())
+
+
+@app.post("/api/sync/save")
+def sync_save():
+    if (bad := _sync_guard()):
+        return bad
+    payload = request.get_json(silent=True)
+    try:
+        if isinstance(payload, dict) and not payload.get("records") and not payload.get("allow_empty"):
+            raise github_store.SyncError("Refusing to overwrite the GitHub ledger with an empty one.", 422)
+        res = github_store.save(payload)
+    except github_store.SyncError as e:
+        log.warning("sync save failed: %s", e)
+        return jsonify(error=str(e)), e.status
+    log.info("sync save: %s matches, commit %s", res["count"], res["commit"])
+    return jsonify(res)
+
+
+@app.get("/api/sync/load")
+def sync_load():
+    if (bad := _sync_guard()):
+        return bad
+    try:
+        data = github_store.load()
+    except github_store.SyncError as e:
+        return jsonify(error=str(e)), e.status
+    return jsonify(ledger=data)
 
 
 @app.post("/api/predict")

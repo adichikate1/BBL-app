@@ -805,3 +805,22 @@ def get_wicket_lost_and_runs(match_links, team_short_name):
         print("\n")
 
         return all_teams_wickets_runs, all_nrr
+
+
+def get_date_and_time(script):
+    date_index = script.find(",t:") + 3
+    date_last_index = script[date_index:].find(",")
+    date_and_time = script[date_index: date_index + date_last_index]
+
+    date_month_year, time = date_and_time.split("T")
+    year, month, date = date_month_year.split("-")
+    time = time[:5]
+
+    print("Date: ", date)
+    print("Month: ", month)
+    print("Year: ", year)
+    print("Time: ", time)
+    print("\n")
+
+    return date, month, year, time
+# ======================== END VERBATIM NOTEBOOK FUNCTIONS ========================

@@ -6,6 +6,7 @@ get_wicket_lost_and_runs), called in the same order as in the notebook, and the 
 notebook's own formulas (mean of the last 5 matches).
 """
 import contextvars
+import datetime
 import re
 import threading
 import time
@@ -14,8 +15,8 @@ from concurrent.futures import ThreadPoolExecutor
 import requests as _rq
 
 import crex_functions as cf
-from crex_functions import (BeautifulSoup, find_team_name, get_h2h_winner, get_links,  # noqa: F401
-                            get_recent_form, get_wicket_lost_and_runs, requests)
+from crex_functions import (BeautifulSoup, find_team_name, get_date_and_time, get_h2h_winner,  # noqa: F401
+                            get_links, get_recent_form, get_wicket_lost_and_runs, requests)
 
 # The slug text is ignored by CREX; only the code matters (the notebook relies on this too).
 URL = ("https://crex.com/cricket-live-score/bh-w-vs-mlr-w-1st-t20-womens-big-bash-league-2025"
@@ -42,6 +43,16 @@ def _count_wins(h2h_winner, team_name):
     return sum(1 for v in h2h_winner.values() if _norm(v) == _norm(team_name))
 
 
+def _match_date_time(script):
+    """Run the notebook's get_date_and_time. A date problem must not break the whole fetch."""
+    try:
+        date, month, year, time_ = get_date_and_time(script)
+        iso = datetime.date(int(year), int(month), int(date)).isoformat()
+        return iso, (time_ if re.fullmatch(r"\d{2}:\d{2}", time_) else None)
+    except Exception:  # noqa: BLE001 - page layout changed / no date on the page
+        return None, None
+
+
 def _scrape(code):
     # --- main match page (same lines as the notebook) ---
     url = URL.format(code=code)
@@ -55,6 +66,7 @@ def _scrape(code):
     recent_form = get_recent_form(script, team1_name, team2_name)
     h2h_winner = get_h2h_winner(script)
     team1_all_match_links, team2_all_match_links = get_links(script)
+    match_date, match_time = _match_date_time(script)
 
     # the two teams are independent, so read them side by side (each keeps the notebook's own code path)
     with ThreadPoolExecutor(max_workers=2) as ex:
@@ -73,6 +85,7 @@ def _scrape(code):
 
     return {
         "code": code, "team1_name": team1_name, "team2_name": team2_name,
+        "date": match_date, "time": match_time,
         "t1": {"form": float(sum(recent_form[team1_name][:5])), "h2h": _count_wins(h2h_winner, team1_name),
                "nrr5": round(team1_nrr5, 4), "avgruns": round(team1_avg_runs, 2), "avgwk": round(team1_avg_wickets, 2)},
         "t2": {"form": float(sum(recent_form[team2_name][:5])), "h2h": _count_wins(h2h_winner, team2_name),

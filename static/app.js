@@ -96,9 +96,24 @@
       bar.append(i); li.append(l, bar); list.append(li);
       requestAnimationFrame(() => requestAnimationFrame(() => { i.style.width = `${Math.min(50, (Math.abs(f.effect) / max) * 50)}%`; }));
     });
+    showStake(r);
     result.hidden = false;
     requestAnimationFrame(() => { $('bar1').style.width = `${r.p_team1 * 100}%`; });
     result.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  function showStake(r) {
+    const box = $('stakebox');
+    if (!window.Ledger) { box.hidden = true; return; }
+    const s = window.Ledger.suggest(), n = s.nextStake, m = window.Ledger.money;
+    let t = n.reason === 'recover'
+      ? `Next stake: ${m(n.amount)} (net ${window.Ledger.signed(s.net)} over ${s.played} played match${s.played === 1 ? '' : 'es'}).`
+      : `Next stake: ${m(n.amount)} (base stake, no loss to recover).`;
+    if (s.limitHit) t = `Your stop-loss is reached: do not bet. ${t}`;
+    else if (r.strength === 'Toss-up') t += ' The model sees this as a toss-up (under 5% edge), so skipping is also an option.';
+    $('stake-line').textContent = t;
+    $('stake-link').href = `/tracker?match=${encodeURIComponent(short(r.team1) + ' vs ' + short(r.team2))}&pick=${encodeURIComponent(short(r.winner))}`;
+    box.hidden = false;
   }
 
   form.addEventListener('submit', async (e) => {

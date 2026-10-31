@@ -3,7 +3,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY app.py predictor.py scraper.py crex_functions.py ./
+COPY app.py predictor.py scraper.py crex_functions.py github_store.py ./
 COPY model ./model
 COPY templates ./templates
 COPY static ./static
