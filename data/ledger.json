@@ -56,6 +56,20 @@
       "amount": 100.0,
       "note": "",
       "created": 1793449687743
+    },
+    {
+      "id": "mvwdpj857diz",
+      "code": "12X8",
+      "date": "2026-10-31",
+      "time": "13:40",
+      "match": "Perth Scorchers Women vs Melbourne Renegades Women",
+      "pick": "Melbourne Renegades Women",
+      "prob": 0.5412,
+      "status": "lost",
+      "stake": 76.0,
+      "amount": 76.0,
+      "note": "",
+      "created": 1793449806485
     }
   ],
   "settings": {
