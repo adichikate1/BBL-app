@@ -42,6 +42,20 @@
       "amount": 100.0,
       "note": "",
       "created": 1793449610456
+    },
+    {
+      "id": "mvwdmzlr19km",
+      "code": "12X7",
+      "date": "2026-10-31",
+      "time": "10:10",
+      "match": "Adelaide Strikers Women vs Melbourne Stars Women",
+      "pick": "Adelaide Strikers Women",
+      "prob": 0.5818,
+      "status": "won",
+      "stake": 75.0,
+      "amount": 99.0,
+      "note": "",
+      "created": 1793449687743
     }
   ],
   "settings": {
