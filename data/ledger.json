@@ -1,6 +1,21 @@
 {
   "version": 1,
-  "records": [],
+  "records": [
+    {
+      "id": "mvwdhpxqjb4t",
+      "code": "12X4",
+      "date": "2026-10-29",
+      "time": "10:10",
+      "match": "Melbourne Renegades Women vs Sydney Thunder Women",
+      "pick": "Sydney Thunder Women",
+      "prob": 0.5655,
+      "status": "skipped",
+      "stake": 0,
+      "amount": 0,
+      "note": "",
+      "created": 1793449441934
+    }
+  ],
   "settings": {
     "baseStake": 100.0,
     "maxStake": 0,
