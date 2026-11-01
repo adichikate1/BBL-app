@@ -70,6 +70,20 @@
       "amount": 76.0,
       "note": "",
       "created": 1793449806485
+    },
+    {
+      "id": "mvxizvh41lzi",
+      "code": "12X9",
+      "date": "2026-11-01",
+      "time": "10:10",
+      "match": "Sydney Thunder Women vs Brisbane Heat Women",
+      "pick": "Sydney Thunder Women",
+      "prob": 0.6893,
+      "status": "won",
+      "stake": 244.0,
+      "amount": 100.0,
+      "note": "",
+      "created": 1793519153176
     }
   ],
   "settings": {
