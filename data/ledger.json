@@ -98,20 +98,6 @@
       "amount": 100.0,
       "note": "",
       "created": 1793533517687
-    },
-    {
-      "id": "mvz4rg10sjj0",
-      "code": "12XB",
-      "date": "2026-11-02",
-      "time": "13:40",
-      "match": "Melbourne Stars Women vs Perth Scorchers Women",
-      "pick": "Melbourne Stars Women",
-      "prob": 0.5058,
-      "status": "won",
-      "stake": 120.0,
-      "amount": 100.0,
-      "note": "",
-      "created": 1793616177636
     }
   ],
   "settings": {
