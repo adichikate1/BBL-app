@@ -187,8 +187,10 @@ def get_h2h_winner(script):
         else:
             if "won" in result:
                 winner, raw = result.split("won")
+                winner = winner.replace("-", "")
             elif "Won" in result:
                 winner, raw = result.split("Won")
+                winner = winner.replace("-", "")
             result_index = modi_script.find("result:", result_index + 1 + 7)
             match[f"Match {i}"] = winner.replace(" ", "")
             print(f"Match {i}: ", match[f"Match {i}"])
