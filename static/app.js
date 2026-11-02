@@ -148,6 +148,8 @@
       const u = d.matches_used, few = u.t1 < 5 || u.t2 < 5;
       note.textContent = `Loaded from CREX: ${short(d.team1)} (${u.t1} past matches) vs ${short(d.team2)} (${u.t2})` +
         (few ? ' — fewer than 5 available, so averaged over those.' : '. You can still edit any number and predict again.');
+      if (d.h2h_unmatched && d.h2h_unmatched.length) note.textContent += ` Head-to-head: could not match ${d.h2h_unmatched.length} CREX result(s) to a team (${d.h2h_unmatched.join(', ')}). Check the H2H boxes.`;
+      else if (d.h2h_results && !d.h2h_results.length) note.textContent += ' Head-to-head: CREX listed no earlier meetings, so both are 0.';
       note.hidden = false;
       form.requestSubmit();
     } catch (ex) { showError(ex.message || 'Network error. Please try again.'); }
