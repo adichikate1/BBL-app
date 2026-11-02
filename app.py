@@ -133,7 +133,8 @@ def fetch_from_crex():
     except predictor.ValidationError:
         prediction = None
     return jsonify(code=d["code"], team1=t1, team2=t2, t1=d["t1"], t2=d["t2"], matches_used=d["matches_used"],
-                   date=d["date"], time=d["time"], prediction=prediction)
+                   date=d["date"], time=d["time"], prediction=prediction,
+                   h2h_results=d["h2h_results"], h2h_unmatched=d["h2h_unmatched"])
 
 
 # --- GitHub sync of the bet ledger -------------------------------------------------
