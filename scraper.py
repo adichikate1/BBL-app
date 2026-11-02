@@ -39,8 +39,42 @@ def _norm(s):
     return re.sub(r"\W+", "", s or "").lower()
 
 
-def _count_wins(h2h_winner, team_name):
-    return sum(1 for v in h2h_winner.values() if _norm(v) == _norm(team_name))
+def _keys(name, short):
+    """Every spelling CREX may use for a team in a result line: full name, name without 'Women', short code."""
+    full = _norm(name)
+    keys = {full, full.replace("women", ""), _norm(short)}
+    sh = _norm(short)
+    if len(sh) > 2 and sh.endswith("w"):
+        keys.add(sh[:-1])                       # 'BH-W' -> 'bh'
+    return {k for k in keys if k}
+
+
+def _is_team(winner, name, short):
+    w = _norm(winner)
+    if not w:
+        return False
+    for k in _keys(name, short):
+        if w == k or (len(k) >= 4 and len(w) >= 4 and (w.startswith(k) or k.startswith(w))):
+            return True
+    return False
+
+
+def _h2h_wins(h2h_winner, t1, s1, t2, s2):
+    """Wins per team over the last 5 head-to-head results. Ties/no-result count for nobody.
+    Returns (t1_wins, t2_wins, unmatched_winner_texts)."""
+    a = b = 0
+    unmatched = []
+    for v in list(h2h_winner.values())[:5]:      # the model feature is 'Last 5 H2H Won'
+        if _norm(v) == "matchtie":
+            continue
+        ia, ib = _is_team(v, t1, s1), _is_team(v, t2, s2)
+        if ia and not ib:
+            a += 1
+        elif ib and not ia:
+            b += 1
+        else:
+            unmatched.append(v)
+    return a, b, unmatched
 
 
 def _match_date_time(script):
@@ -83,12 +117,14 @@ def _scrape(code):
     team1_nrr5 = (all_team1_nrr["Match 1"] + all_team1_nrr["Match 2"] + all_team1_nrr["Match 3"] + all_team1_nrr["Match 4"] + all_team1_nrr["Match 5"])/5
     team2_nrr5 = (all_team2_nrr["Match 1"] + all_team2_nrr["Match 2"] + all_team2_nrr["Match 3"] + all_team2_nrr["Match 4"] + all_team2_nrr["Match 5"])/5
 
+    h2h_t1, h2h_t2, h2h_unmatched = _h2h_wins(h2h_winner, team1_name, team1_short_name, team2_name, team2_short_name)
     return {
+        "h2h_results": [str(v) for v in list(h2h_winner.values())[:5]], "h2h_unmatched": h2h_unmatched,
         "code": code, "team1_name": team1_name, "team2_name": team2_name,
         "date": match_date, "time": match_time,
-        "t1": {"form": float(sum(recent_form[team1_name][:5])), "h2h": _count_wins(h2h_winner, team1_name),
+        "t1": {"form": float(sum(recent_form[team1_name][:5])), "h2h": h2h_t1,
                "nrr5": round(team1_nrr5, 4), "avgruns": round(team1_avg_runs, 2), "avgwk": round(team1_avg_wickets, 2)},
-        "t2": {"form": float(sum(recent_form[team2_name][:5])), "h2h": _count_wins(h2h_winner, team2_name),
+        "t2": {"form": float(sum(recent_form[team2_name][:5])), "h2h": h2h_t2,
                "nrr5": round(team2_nrr5, 4), "avgruns": round(team2_avg_runs, 2), "avgwk": round(team2_avg_wickets, 2)},
         "matches_used": {"t1": 5, "t2": 5},
     }
