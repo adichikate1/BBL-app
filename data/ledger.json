@@ -126,6 +126,20 @@
       "amount": 100.0,
       "note": "",
       "created": 1793792191276
+    },
+    {
+      "id": "mw397lwhpy15",
+      "code": "12XD",
+      "date": "2026-11-05",
+      "time": "10:10",
+      "match": "Adelaide Strikers Women vs Brisbane Heat Women",
+      "pick": "Adelaide Strikers Women",
+      "prob": 0.6807,
+      "status": "lost",
+      "stake": 198.0,
+      "amount": 198.0,
+      "note": "",
+      "created": 1793865514914
     }
   ],
   "settings": {
