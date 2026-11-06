@@ -154,6 +154,20 @@
       "amount": 156.0,
       "note": "",
       "created": 1793878636936
+    },
+    {
+      "id": "mw4x64wy9jkm",
+      "code": "12XF",
+      "date": "2026-11-06",
+      "time": "13:40",
+      "match": "Melbourne Stars Women vs Sydney Sixers Women",
+      "pick": "Sydney Sixers Women",
+      "prob": 0.5267,
+      "status": "won",
+      "stake": 196.0,
+      "amount": 200.0,
+      "note": "",
+      "created": 1793966223202
     }
   ],
   "settings": {
