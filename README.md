@@ -46,7 +46,7 @@ in the notebook's order: `find_team_name` → `get_recent_form` → `get_h2h_win
 
 ## Bet tracker (`/tracker`)
 Log every match as **won / lost / pending / skipped**; the page keeps net profit-loss, win rate, ROI and a running total per match.
-- **Next stake rule:** if net < 0 → `|net| ÷ matches played` (e.g. ₹500 down over 3 played → ₹166.67 → ₹167); if you are in profit or break-even → your base stake.
+- **Profit target rule:** `net loss ÷ (matches won − matches lost)`. Negative result (more lost than won) → that amount is the profit to aim for in the next match; positive result (more won than lost) → base target (₹100); no loss yet → base target; won = lost → base target (cannot divide). The page also shows the stake that would earn that profit at your expected odds.
 - "Played" counts only won + lost bets. Skipped and pending matches are logged but not counted in the divisor.
 - Optional **max stake** cap and **stop-loss** warning, plus an honest "if it wins / if it loses at odds X" preview.
 - The predictor shows the suggested stake under each prediction (and flags toss-ups as skippable) with a "Log this bet" link that pre-fills the tracker.
@@ -69,14 +69,13 @@ A profit/loss log that lives in the browser (`localStorage`, key `bblw.ledger.v1
 
 - Every match gets one row: date, match, pick, status (`pending`, `won`, `lost`, `skipped`), stake, amount, note.
 - Net profit/loss = sum of won amounts minus lost amounts. Skipped and pending rows are kept but not counted.
-- **Next stake** = `total loss ÷ matches played` (played = won + lost), rounded. In profit (or no loss) it is the base stake.
-  Example: lost ₹500 over 3 played matches -> next stake ₹167.
-- Settings: base stake, max stake cap, stop-loss limit, expected odds (used for the what-if line).
-- The Predictor page shows the suggested stake under each result and links to the tracker with the match prefilled.
+- **Profit target** = `net loss ÷ (won − lost)`, rounded. Negative result -> that is the profit to aim for; positive result, no loss, or won = lost -> base target (default ₹100). Skipped/pending are not counted.
+  Examples: ₹300 down, 4 won 6 lost -> 300 ÷ (−2) -> target ₹150; ₹360 down, 6 won 4 lost -> positive -> target ₹100.
+- Under it the page shows the stake needed to win that profit at your odds (`target ÷ (odds − 1)`), capped by your max stake, with the net after a win or a loss.
 - Export CSV / Clear all. Clearing site data deletes the log, so export regularly.
 - Pure maths lives in `static/ledger.js` and is tested with `node tests/ledger.test.js`.
 
-Note: loss ÷ played does not recover losses by itself; it is a staking rule, not an edge.
+Note: this formula does not recover losses by itself; it is a staking rule, not an edge.
 
 ### Auto-fill and GitHub backup (tracker)
 
