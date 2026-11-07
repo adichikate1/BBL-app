@@ -105,10 +105,12 @@
   function showStake(r) {
     const box = $('stakebox');
     if (!window.Ledger) { box.hidden = true; return; }
-    const s = window.Ledger.suggest(), n = s.nextStake, m = window.Ledger.money;
-    let t = n.reason === 'recover'
-      ? `Next stake: ${m(n.amount)} (net ${window.Ledger.signed(s.net)} over ${s.played} played match${s.played === 1 ? '' : 'es'}).`
-      : `Next stake: ${m(n.amount)} (base stake, no loss to recover).`;
+    const s = window.Ledger.suggest(), n = s.target, m = window.Ledger.money;
+    let t = n.reason === 'formula'
+      ? `Profit target for this match: ${m(n.amount)} (net loss ${m(-s.net)} ÷ (${s.won} won − ${s.lost} lost) = ${m(n.value)}, negative so used as the target).`
+      : n.reason === 'even' ? `Profit target for this match: ${m(n.amount)} (base target: won = lost, so the formula cannot divide).`
+      : `Profit target for this match: ${m(n.amount)} (base target).`;
+    if (s.stake.amount != null) t += ` Stake about ${m(s.stake.amount)} at odds ${s.settings.odds}.`;
     if (s.limitHit) t = `Your stop-loss is reached: do not bet. ${t}`;
     else if (r.strength === 'Toss-up') t += ' The model sees this as a toss-up (under 5% edge), so skipping is also an option.';
     $('stake-line').textContent = t;
