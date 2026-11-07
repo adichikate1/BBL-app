@@ -55,22 +55,36 @@
     net = r2(net);
     const played = won + lost;
 
-    // Next stake: in loss -> (total loss) / (matches actually played); otherwise the base stake.
-    // Skipped and still-pending matches are not part of "played".
-    let raw, reason;
-    if (net < 0 && played > 0) { raw = -net / played; reason = 'recover'; }
-    else { raw = s.baseStake; reason = 'base'; }
-    let amount = Math.max(0, Math.round(raw));
-    let capped = false;
-    if (s.maxStake > 0 && amount > s.maxStake) { amount = s.maxStake; capped = true; }
+    // Target profit for the next match = Net Loss / (matches won - matches lost). Skipped and pending are not counted.
+    //  - not in loss (net >= 0) or nothing played -> base target
+    //  - in loss and the result is negative (more lost than won) -> that result, as a positive target
+    //  - in loss and the result is positive (more won than lost) -> base target
+    //  - in loss but won == lost -> division by zero, so base target ('even')
+    const diff = won - lost;
+    let raw = s.baseStake, reason = 'base', value = null;
+    if (net < 0 && played > 0) {
+      if (diff === 0) reason = 'even';
+      else {
+        value = r2(-net / diff);
+        if (value < 0) { raw = -value; reason = 'formula'; }
+      }
+    }
+    const targetAmount = Math.max(0, Math.round(raw));
+    // Stake needed to win that profit at the expected odds (the cap applies to the stake, not to the profit).
+    let stake = null, uncapped = null, capped = false;
+    if (s.odds > 1) {
+      uncapped = Math.max(0, Math.round(targetAmount / (s.odds - 1))); stake = uncapped;
+      if (s.maxStake > 0 && stake > s.maxStake) { stake = s.maxStake; capped = true; }
+    }
 
     return {
       played, won, lost, skipped, pending, net, staked: r2(staked), pendingStake: r2(pendingStake),
       winRate: played ? won / played : 0,
       roi: staked ? net / staked : 0,
-      nextStake: { amount, raw: r2(raw), reason, capped },
-      ifWin: r2(net + amount * (s.odds - 1)),
-      ifLose: r2(net - amount),
+      target: { amount: targetAmount, raw: r2(raw), reason, value, diff },
+      stake: { amount: stake, uncapped, capped },
+      ifWin: stake == null ? null : r2(net + stake * (s.odds - 1)),
+      ifLose: stake == null ? null : r2(net - stake),
       limitHit: s.lossLimit > 0 && net <= -s.lossLimit,
     };
   }
