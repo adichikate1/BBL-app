@@ -100,7 +100,7 @@
       "created": 1793533517687
     },
     {
-      "id": "mvz4rg10sjj0",
+      "id": "mvz7f7zhuh9x",
       "code": "12XB",
       "date": "2026-11-02",
       "time": "13:40",
@@ -111,7 +111,63 @@
       "stake": 120.0,
       "amount": 120.0,
       "note": "",
-      "created": 1793616177636
+      "created": 1793620646190
+    },
+    {
+      "id": "mw21k10r3ylw",
+      "code": "12XC",
+      "date": "2026-11-04",
+      "time": "13:40",
+      "match": "Hobart Hurricanes Women vs Melbourne Renegades Women",
+      "pick": "Melbourne Renegades Women",
+      "prob": 0.6398,
+      "status": "won",
+      "stake": 108.0,
+      "amount": 100.0,
+      "note": "",
+      "created": 1793792191276
+    },
+    {
+      "id": "mw397lwhpy15",
+      "code": "12XD",
+      "date": "2026-11-05",
+      "time": "10:10",
+      "match": "Adelaide Strikers Women vs Brisbane Heat Women",
+      "pick": "Adelaide Strikers Women",
+      "prob": 0.6807,
+      "status": "lost",
+      "stake": 198.0,
+      "amount": 198.0,
+      "note": "",
+      "created": 1793865514914
+    },
+    {
+      "id": "mw3h0ux49ok8",
+      "code": "12XE",
+      "date": "2026-11-05",
+      "time": "13:40",
+      "match": "Sydney Thunder Women vs Perth Scorchers Women",
+      "pick": "Sydney Thunder Women",
+      "prob": 0.5606,
+      "status": "lost",
+      "stake": 156.0,
+      "amount": 156.0,
+      "note": "",
+      "created": 1793878636936
+    },
+    {
+      "id": "mw4x64wy9jkm",
+      "code": "12XF",
+      "date": "2026-11-06",
+      "time": "13:40",
+      "match": "Melbourne Stars Women vs Sydney Sixers Women",
+      "pick": "Sydney Sixers Women",
+      "prob": 0.5267,
+      "status": "won",
+      "stake": 196.0,
+      "amount": 250.0,
+      "note": "",
+      "created": 1793966223202
     }
   ],
   "settings": {
