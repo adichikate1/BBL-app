@@ -26,17 +26,24 @@
     tile('Skipped', String(s.skipped), 'no bet placed');
     tile('Pending', String(s.pending), s.pending ? `${L.money(s.pendingStake)} at risk` : 'none open');
 
-    const n = s.nextStake;
+    const n = s.target;
     $('nb-amount').textContent = L.money(n.amount);
     let why;
-    if (n.reason === 'recover') {
-      why = `You are ${L.signed(s.net)} over ${s.played} played match${s.played === 1 ? '' : 'es'}: ${L.money(-s.net)} ÷ ${s.played} = ${L.money(n.raw)}` + (n.amount !== n.raw && !n.capped ? `, rounded to ${L.money(n.amount)}.` : '.');
+    const loss = L.money(-s.net);
+    if (n.reason === 'formula') {
+      why = `Net loss ${loss} ÷ (${s.won} won − ${s.lost} lost = ${n.diff}) = ${L.money(n.value)}. The result is negative, so aim to make ${L.money(n.raw)}` + (n.amount !== n.raw ? `, rounded to ${L.money(n.amount)}.` : '.');
+    } else if (n.reason === 'even') {
+      why = `Net loss ${loss}, but ${s.won} won − ${s.lost} lost = 0, so the formula cannot divide. Base target used.`;
+    } else if (s.net < 0) {
+      why = `Net loss ${loss} ÷ (${s.won} won − ${s.lost} lost = ${n.diff}) = ${L.money(n.value)}. More won than lost, so the base target.`;
     } else {
-      why = s.net > 0 ? `You are in profit (${L.signed(s.net)}), so no recovery is needed: your base stake.` : 'No loss to recover: your base stake.';
+      why = s.net > 0 ? `You are in profit (${L.signed(s.net)}): the base target.` : 'No loss yet: the base target.';
     }
-    if (n.capped) why += ` Capped at your max stake of ${L.money(state.settings.maxStake)} (uncapped: ${L.money(n.raw)}).`;
     $('nb-why').textContent = why;
-    $('nb-whatif').textContent = `If this bet wins at odds ${state.settings.odds}: net ${L.signed(s.ifWin)}.  If it loses: net ${L.signed(s.ifLose)}.`;
+    const st = s.stake;
+    $('nb-whatif').textContent = st.amount == null ? 'Set expected odds above 1 in Settings to see the stake needed.'
+      : `To make ${L.money(n.amount)} at odds ${state.settings.odds} you would stake about ${L.money(st.amount)}` + (st.capped ? ` (capped by your max stake; uncapped ${L.money(st.uncapped)})` : '') +
+        `. If it wins: net ${L.signed(s.ifWin)}. If it loses: net ${L.signed(s.ifLose)}.`;
 
     const lim = $('limit');
     lim.hidden = !s.limitHit;
@@ -85,7 +92,7 @@
     $('entry').reset();
     $('f-date').value = keepDate && lastDate ? lastDate : today();
     const s = L.summarize(state.records, state.settings);
-    $('f-stake').value = s.nextStake.amount;
+    $('f-stake').value = s.stake.amount == null ? '' : s.stake.amount;
     $('f-status').value = 'pending';
     setPick('', null);
     if (prefill) { $('f-match').value = prefill.match || ''; $('f-pick').value = prefill.pick || ''; }
@@ -144,7 +151,7 @@
   }
   ['s-base', 's-max', 's-limit', 's-odds'].forEach((id) => $(id).addEventListener('change', () => {
     state.settings = { baseStake: $('s-base').value, maxStake: $('s-max').value || 0, lossLimit: $('s-limit').value || 0, odds: $('s-odds').value };
-    state = L.normalize(state); loadSettings(); persist(); renderAll(); if (!editingId) $('f-stake').value = L.summarize(state.records, state.settings).nextStake.amount;
+    state = L.normalize(state); loadSettings(); persist(); renderAll(); if (!editingId) { const sg = L.summarize(state.records, state.settings).stake.amount; $('f-stake').value = sg == null ? '' : sg; }
   }));
   $('export').addEventListener('click', () => {
     const blob = new Blob([L.csv(state.records)], { type: 'text/csv;charset=utf-8' });
