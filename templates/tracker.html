@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Bet Tracker · BBL Women</title>
-  <meta name="description" content="Log every match (won, lost, pending or skipped) and see your net profit/loss and the next stake.">
+  <meta name="description" content="Log every match (won, lost, pending or skipped) and see your net profit/loss and the profit target for the next match.">
   <meta name="theme-color" content="#0e0e0c">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230e0e0c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%23f2ecdf' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +23,7 @@
     <section class="hero">
       <p class="eyebrow">Bankroll log</p>
       <h1>Where do<br><em>you stand?</em></h1>
-      <p class="lede">Log every match: won, lost, pending or skipped. This page keeps your net profit/loss and works out the next stake. It is stored in this browser, and can also be backed up to your GitHub repo.</p>
+      <p class="lede">Log every match: won, lost, pending or skipped. This page keeps your net profit/loss and works out the profit to aim for in the next match. It is stored in this browser, and can also be backed up to your GitHub repo.</p>
     </section>
 
     <p id="storewarn" class="alert" role="alert" hidden>Your browser is blocking storage, so this log will be lost when you close the tab. Use “Export CSV” to keep a copy.</p>
@@ -32,7 +32,7 @@
     <section class="tiles" id="tiles" aria-label="Summary"></section>
 
     <section class="nextbet" aria-live="polite">
-      <p class="eyebrow">Next stake</p>
+      <p class="eyebrow">Profit target for the next match</p>
       <div class="big" id="nb-amount">—</div>
       <p id="nb-why" class="why"></p>
       <p id="nb-whatif" class="whatif"></p>
@@ -83,7 +83,7 @@
     <details class="panel settings">
       <summary>Settings <small>base stake, limits, expected odds</small></summary>
       <div class="grid entry">
-        <div class="cell"><label for="s-base">Base stake (₹)</label><input id="s-base" type="number" min="0" step="1"><small>Used when you are not in loss.</small></div>
+        <div class="cell"><label for="s-base">Base profit target (₹)</label><input id="s-base" type="number" min="0" step="1"><small>Used when you are not in loss, or won ≥ lost.</small></div>
         <div class="cell"><label for="s-max">Max stake per match (₹)</label><input id="s-max" type="number" min="0" step="1" placeholder="0 = no cap"><small>Caps the suggested stake.</small></div>
         <div class="cell"><label for="s-limit">Stop-loss (₹)</label><input id="s-limit" type="number" min="0" step="1" placeholder="0 = off"><small>Shows a stop warning once your net loss reaches this.</small></div>
         <div class="cell"><label for="s-odds">Typical decimal odds</label><input id="s-odds" type="number" min="1.01" step="0.01"><small>Only for the “if it wins” line.</small></div>
@@ -101,7 +101,7 @@
 
     <section class="honest">
       <h3>Reality check</h3>
-      <p>“Loss ÷ matches played” does <strong>not</strong> win your money back: a single win at normal odds pays back only a fraction of the loss, while a few more losses make the stakes bigger. The prediction model is right about 58% of the time on past seasons, and bookmaker margins usually cancel that edge. Treat this as a log that shows the truth, set a stop-loss, and only use money you can afford to lose. Online betting is restricted or illegal in many places in India, so check the rules where you live.</p>
+      <p>This target formula does <strong>not</strong> guarantee that your money comes back: a single win at normal odds pays back only a fraction of the loss, while a few more losses make the stakes bigger. The prediction model is right about 58% of the time on past seasons, and bookmaker margins usually cancel that edge. Treat this as a log that shows the truth, set a stop-loss, and only use money you can afford to lose. Online betting is restricted or illegal in many places in India, so check the rules where you live.</p>
     </section>
   </main>
 
