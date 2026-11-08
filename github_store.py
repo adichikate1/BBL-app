@@ -67,11 +67,15 @@ def clean(data):
             "prob": round(_num(prob), 4) if prob not in (None, "") and 0 <= _num(prob, -1) <= 1 else None,
             "status": r["status"], "stake": max(0, round(_num(r.get("stake")), 2)),
             "amount": max(0, round(_num(r.get("amount")), 2)), "note": str(r.get("note", ""))[:200],
-            "created": int(_num(r.get("created"))),
+            "created": int(_num(r.get("created"))), "updated": int(_num(r.get("updated"))),
         })
+    deleted = []
+    for t in (data.get("deleted") if isinstance(data.get("deleted"), list) else [])[:MAX_RECORDS]:
+        if isinstance(t, dict) and t.get("id") not in (None, ""):
+            deleted.append({"id": str(t["id"])[:32], "at": int(_num(t.get("at")))})
     s = data.get("settings") if isinstance(data.get("settings"), dict) else {}
     settings = {k: max(0, _num(s.get(k), d)) for k, d in (("baseStake", 100), ("maxStake", 0), ("lossLimit", 0), ("odds", 1.9))}
-    return {"version": 1, "records": recs, "settings": settings}
+    return {"version": 1, "records": recs, "deleted": deleted, "settings": settings}
 
 
 def _repo():  # separate function so tests can replace it
