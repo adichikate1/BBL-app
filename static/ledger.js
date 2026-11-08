@@ -28,8 +28,33 @@
         stake: Math.max(0, r2(num(r.stake, 0))),
         amount: Math.max(0, r2(num(r.amount, 0))),
         created: num(r.created, 0),
+        updated: num(r.updated, num(r.created, 0)),
       }));
-    return { records, settings: s };
+    // tombstones: a deleted id must stay deleted when another device's copy is merged in
+    const tomb = new Map();
+    ((d && Array.isArray(d.deleted)) ? d.deleted : []).forEach((t) => {
+      if (t && t.id != null) tomb.set(String(t.id).slice(0, 32), Math.max(tomb.get(String(t.id).slice(0, 32)) || 0, num(t.at, 0)));
+    });
+    const deleted = [...tomb].map(([id, at]) => ({ id, at })).sort((a, b) => b.at - a.at).slice(0, 5000);
+    return { records, deleted, settings: s };
+  }
+
+  const order = (r) => r.date + (r.time || '00:00') + String(r.created).padStart(15, '0') + r.id;
+  /** Union of two ledgers (this browser + GitHub). Newest edit of a match wins; deletions win over older edits. */
+  function merge(a, b) {
+    a = normalize(a); b = normalize(b);
+    const tomb = new Map();
+    a.deleted.concat(b.deleted).forEach((t) => tomb.set(t.id, Math.max(tomb.get(t.id) || 0, t.at)));
+    const best = new Map();
+    a.records.concat(b.records).forEach((r) => { const c = best.get(r.id); if (!c || r.updated > c.updated) best.set(r.id, r); });
+    const records = [...best.values()].filter((r) => !(tomb.has(r.id) && tomb.get(r.id) >= r.updated)).sort((x, y) => order(x).localeCompare(order(y)));
+    const deleted = [...tomb].map(([id, at]) => ({ id, at })).sort((x, y) => y.at - x.at).slice(0, 5000);
+    return { records, deleted, settings: a.settings };
+  }
+  /** Settings-independent fingerprint, to tell whether a merge changed anything. */
+  function canon(st) {
+    const n = normalize(st);
+    return JSON.stringify([n.records.slice().sort((x, y) => order(x).localeCompare(order(y))), n.deleted.slice().sort((x, y) => x.id.localeCompare(y.id))]);
   }
 
   function load() {
@@ -109,7 +134,7 @@
     return rows.map((r) => r.map(esc).join(',')).join('\r\n');
   }
 
-  const api = { KEY, DEFAULTS, normalize, load, save, pnl, summarize, withRunning, money, signed, suggest, csv };
+  const api = { KEY, DEFAULTS, normalize, merge, canon, load, save, pnl, summarize, withRunning, money, signed, suggest, csv };
   root.Ledger = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
