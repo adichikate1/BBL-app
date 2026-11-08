@@ -66,7 +66,7 @@
     <details class="panel settings" id="syncbox" hidden>
       <summary>GitHub backup <small id="sync-state">not connected</small></summary>
       <div class="syncbody">
-        <p class="hint">Every change is saved to <code>data/ledger.json</code> in your GitHub repo (commit per change). The token stays on the server; here you only type the sync key you set in <code>SYNC_KEY</code>.</p>
+        <p class="hint">Every change is saved to <code>data/ledger.json</code> in your GitHub repo (commit per change). Every sync first pulls GitHub's copy and merges it with this browser's, so two devices never overwrite each other. The token stays on the server; here you only type the sync key you set in <code>SYNC_KEY</code>.</p>
         <div class="codebox">
           <input id="sync-key" type="password" autocomplete="off" placeholder="sync key" aria-label="Sync key">
           <button type="button" id="sync-connect" class="fetchbtn">Connect</button>
