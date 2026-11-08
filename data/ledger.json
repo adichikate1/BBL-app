@@ -1,6 +1,22 @@
 {
   "version": 1,
-  "records": [],
+  "records": [
+    {
+      "id": "mw7dgxn87yf8",
+      "code": "12XI",
+      "date": "2026-11-08",
+      "time": "08:10",
+      "match": "Sydney Sixers Women vs Sydney Thunder Women",
+      "pick": "Sydney Sixers Women",
+      "prob": 0.5418,
+      "status": "won",
+      "stake": 85.0,
+      "amount": 100.0,
+      "note": "",
+      "created": 1794114533204,
+      "updated": 1794114533204
+    }
+  ],
   "deleted": [
     {
       "id": "mvwdhpxqjb4t",
