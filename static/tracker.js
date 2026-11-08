@@ -70,7 +70,7 @@
       const act = el('td', 'r');
       const ed = el('button', 'link', 'Edit'); ed.type = 'button'; ed.addEventListener('click', () => startEdit(r.id));
       const del = el('button', 'link danger', 'Delete'); del.type = 'button';
-      del.addEventListener('click', () => { if (confirm('Delete this match from your log?')) { state.records = state.records.filter((x) => x.id !== r.id); if (editingId === r.id) resetForm(); persist(state.records.length === 0); renderAll(); } });
+      del.addEventListener('click', () => { if (confirm('Delete this match from your log?')) { state.records = state.records.filter((x) => x.id !== r.id); state.deleted = (state.deleted || []).concat({ id: r.id, at: Date.now() }); if (editingId === r.id) resetForm(); persist(state.records.length === 0); renderAll(); } });
       act.append(ed, document.createTextNode(' '), del); tr.append(act);
       body.append(tr);
     });
@@ -135,7 +135,7 @@
     const code = $('f-code').value.trim().toUpperCase(), pick = $('f-pick').value.trim();
     if (code && state.records.some((x) => x.code === code && x.id !== editingId)) return fail(`Match ${code} is already in your log. Edit that row instead.`);
     const rec = { id: editingId || Date.now().toString(36) + Math.random().toString(36).slice(2, 6), date: $('f-date').value, time: $('f-time').value, code, match, pick,
-      prob: pick && pick === modelPick ? modelProb : null,
+      prob: pick && pick === modelPick ? modelProb : null, updated: Date.now(),
       note: $('f-note').value.trim(), status, stake: status === 'skipped' ? 0 : stake, amount,
       created: editingId ? (state.records.find((x) => x.id === editingId) || {}).created || Date.now() : Date.now() };
     state.records = editingId ? state.records.map((x) => (x.id === editingId ? rec : x)) : state.records.concat(rec);
@@ -160,7 +160,7 @@
   });
   $('clear').addEventListener('click', () => {
     if (!state.records.length) return;
-    if (confirm('Delete ALL logged matches? This cannot be undone (export a CSV first if you want a copy).' + (sync.key ? ' The GitHub copy will be emptied too (older commits stay in its history).' : ''))) { state.records = []; persist(true); resetForm(); renderAll(); }
+    if (confirm('Delete ALL logged matches? This cannot be undone (export a CSV first if you want a copy).' + (sync.key ? ' The GitHub copy will be emptied too (older commits stay in its history).' : ''))) { state.deleted = (state.deleted || []).concat(state.records.map((x) => ({ id: x.id, at: Date.now() }))); state.records = []; persist(true); resetForm(); renderAll(); }
   });
 
   // ---------- auto-fill from a CREX match code ----------
@@ -192,7 +192,7 @@
   $('f-pick').addEventListener('input', () => { if ($('f-pick').value.trim() !== modelPick) $('pickprob').textContent = ''; else if (modelPick) $('pickprob').textContent = `model: ${pct(modelProb)}`; });
 
   // ---------- GitHub backup (server holds the token; the browser only holds the sync key) ----------
-  const sync = { key: '', enabled: false, busy: false, dirty: false, timer: null, emptyOk: false };
+  const sync = { key: '', enabled: false, busy: false, dirty: false, timer: null, emptyOk: false, last: 0 };
   const KEYSTORE = 'bblw.synckey';
   const syncMsg = (t, bad) => { $('sync-msg').textContent = t; $('sync-msg').classList.toggle('bad', !!bad); };
   const syncState = (t) => { $('sync-state').textContent = t; };
@@ -215,15 +215,28 @@
     clearTimeout(sync.timer); syncState('pending…');
     sync.timer = setTimeout(syncNow, 1200);
   }
+  // Every sync is pull -> merge -> push, so a device with an old copy can never overwrite newer matches.
   async function syncNow() {
     if (!sync.key) return;
     if (sync.busy) { sync.dirty = true; return; }
-    sync.busy = true; syncState('saving…');
-    const allowEmpty = sync.emptyOk; sync.emptyOk = false;
+    sync.busy = true; syncState('syncing…');
+    const forceEmpty = sync.emptyOk; sync.emptyOk = false;
     try {
-      const d = await api('/api/sync/save', { method: 'POST', body: JSON.stringify({ records: state.records, settings: state.settings, allow_empty: allowEmpty }) });
-      syncState(`saved ${hhmm()}`);
-      syncMsg(d.unchanged ? `GitHub already up to date (${d.count} matches).` : `Saved ${d.count} matches to ${d.path} (commit ${d.commit}).`);
+      let pulled = false;
+      const remote = (await api('/api/sync/load')).ledger;
+      if (remote) {
+        const before = L.canon(state);
+        const merged = L.merge(state, remote);          // state is read after the await: edits made meanwhile are kept
+        pulled = L.canon(merged) !== before;
+        state = merged; $('storewarn').hidden = L.save(state);
+        if (pulled) renderAll();
+      }
+      if (!state.records.length && !state.deleted.length) { syncState('connected'); syncMsg('Nothing to sync yet.'); return; }
+      const d = await api('/api/sync/save', { method: 'POST', body: JSON.stringify({ records: state.records, deleted: state.deleted, settings: state.settings,
+        allow_empty: forceEmpty || (!state.records.length && state.deleted.length > 0) }) });
+      sync.last = Date.now();
+      syncState(`synced ${hhmm()}`);
+      syncMsg((pulled ? 'Pulled newer matches from GitHub and merged. ' : '') + (d.unchanged ? `GitHub is up to date (${d.count} matches).` : `Saved ${d.count} matches to ${d.path} (commit ${d.commit}).`));
     } catch (ex) { syncState('error'); syncMsg(`${ex.message} Your data is safe in this browser; it will retry on the next change or “Sync now”.`, true); }
     finally { sync.busy = false; if (sync.dirty) { sync.dirty = false; syncNow(); } }
   }
@@ -247,17 +260,15 @@
       const d = await api('/api/sync/load');
       try { localStorage.setItem(KEYSTORE, k); } catch (e) { /* key just won't be remembered */ }
       $('sync-key').value = ''; syncUi();
-      if (!d.ledger) { syncMsg('Connected. GitHub has no ledger yet.'); if (state.records.length) syncNow(); else syncState('connected'); }
-      else if (!state.records.length) await loadRemote(false);
-      else { syncState('connected'); syncMsg(`Connected. GitHub has ${d.ledger.records.length} matches and this browser has ${state.records.length}. Nothing was changed: use “Load from GitHub” to take GitHub's copy, or “Sync now” to overwrite GitHub with this browser's.`); }
+      syncNow();                                         // pulls GitHub's matches, merges with this browser's, pushes the result
     } catch (ex) { sync.key = ''; syncUi(); syncMsg(ex.message, true); }
   });
-  $('sync-now').addEventListener('click', () => {
-    if (!state.records.length) { if (!confirm('This browser has no matches. Empty the GitHub ledger too?')) return; sync.emptyOk = true; }
-    syncNow();
-  });
+  $('sync-now').addEventListener('click', syncNow);
   $('sync-load').addEventListener('click', () => loadRemote(true));
   $('sync-off').addEventListener('click', () => { sync.key = ''; try { localStorage.removeItem(KEYSTORE); } catch (e) { /* ignore */ } syncUi(); syncMsg('Disconnected. Your GitHub file is untouched.'); });
+  document.addEventListener('visibilitychange', () => {          // coming back to the tab/app: pull what the other device added
+    if (document.visibilityState === 'visible' && sync.key && Date.now() - (sync.last || 0) > 15000) syncNow();
+  });
   (async function initSync() {
     try {
       const d = await (await fetch('/api/sync/status')).json();
@@ -265,7 +276,7 @@
       sync.enabled = true; $('syncbox').hidden = false;
       try { sync.key = localStorage.getItem(KEYSTORE) || ''; } catch (e) { sync.key = ''; }
       syncUi();
-      if (sync.key) syncState('connected');
+      if (sync.key) { syncState('connected'); syncNow(); }          // pull on every page open
     } catch (e) { /* offline: tracker still works locally */ }
   })();
 
