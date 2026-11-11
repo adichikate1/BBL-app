@@ -45,6 +45,21 @@
       "note": "",
       "created": 1794306508802,
       "updated": 1794306508802
+    },
+    {
+      "id": "mwc0xlxfyqr2",
+      "code": "12XL",
+      "date": "2026-11-11",
+      "time": "13:40",
+      "match": "Perth Scorchers Women vs Sydney Thunder Women",
+      "pick": "Perth Scorchers Women",
+      "prob": 0.6812,
+      "status": "won",
+      "stake": 77.0,
+      "amount": 100.0,
+      "note": "",
+      "created": 1794395807043,
+      "updated": 1794395807043
     }
   ],
   "deleted": [
