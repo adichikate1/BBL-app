@@ -129,12 +129,12 @@
       "match": "Sydney Sixers vs Melbourne Renegades",
       "pick": "Sydney Sixers",
       "prob": null,
-      "status": "won",
+      "status": "lost",
       "stake": 261.0,
-      "amount": 182.0,
+      "amount": 261.0,
       "note": "",
       "created": 1794701779145,
-      "updated": 1794701779145
+      "updated": 1794712099039
     }
   ],
   "deleted": [
