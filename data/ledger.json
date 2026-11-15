@@ -120,6 +120,21 @@
       "note": "",
       "created": 1794656574213,
       "updated": 1794656574213
+    },
+    {
+      "id": "mwhct2rme28m",
+      "code": "12XQ",
+      "date": "2026-11-15",
+      "time": "05:30",
+      "match": "Sydney Sixers Women vs Melbourne Renegades Women",
+      "pick": "Sydney Sixers Women",
+      "prob": 0.6481,
+      "status": "lost",
+      "stake": 261.0,
+      "amount": 261.0,
+      "note": "",
+      "created": 1794718081858,
+      "updated": 1794718081858
     }
   ],
   "deleted": [
