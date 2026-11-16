@@ -135,6 +135,21 @@
       "note": "",
       "created": 1794718081858,
       "updated": 1794718081858
+    },
+    {
+      "id": "mwj6kihg1lg8",
+      "code": "12XR",
+      "date": "2026-11-16",
+      "time": "13:40",
+      "match": "Sydney Thunder Women vs Melbourne Stars Women",
+      "pick": "Sydney Thunder Women",
+      "prob": 0.5838,
+      "status": "lost",
+      "stake": 758.0,
+      "amount": 758.0,
+      "note": "",
+      "created": 1794828536980,
+      "updated": 1794828536980
     }
   ],
   "deleted": [
